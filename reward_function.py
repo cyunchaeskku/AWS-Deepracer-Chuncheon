@@ -62,17 +62,15 @@ def reward_function(params):
         return current_reward
 
     def stay_inside_border_reward(current_reward, all_wheels_on_track, distance_from_center, track_width):
-        
-        # Give a very low reward by default
-        reward = 1e-3
-
         # Give a high reward if no wheels go off the track and 
         # the car is somewhere in between the track borders 
         if all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05:
-            reward = 1.0
+            current_reward *= 1.0
+        else:
+            current_reward *= 0.4
 
         # Always return a float value
-        return reward
+        return current_reward
         
 
     reward = on_track_reward(reward, on_track)
@@ -81,5 +79,6 @@ def reward_function(params):
     reward = steering_reward(reward, steering)
     reward = straight_line_reward(reward, steering, speed)
     reward = speed_reward(reward, speed)
+    reward = stay_inside_border_reward(reward, all_wheels_on_track, distance_from_center, track_width)
 
     return float(reward)
